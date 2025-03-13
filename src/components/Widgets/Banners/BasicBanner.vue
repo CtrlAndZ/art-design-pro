@@ -1,22 +1,26 @@
 <template>
   <div
     class="basic-banner art-custom-card"
+    :class="{ 'has-decoration': showDecoration }"
     :style="{ backgroundColor: backgroundColor, height: height }"
   >
     <div class="basic-banner__content">
       <p class="basic-banner__title" :style="{ color: titleColor }"> {{ title }}</p>
       <p class="basic-banner__subtitle" :style="{ color: subtitleColor }">{{ subtitle }}</p>
       <div
+        v-if="showButton"
         class="basic-banner__button"
         :style="{ backgroundColor: buttonColor, color: buttonTextColor }"
         @click="handleClick"
       >
         {{ buttonText }}
       </div>
+      <slot></slot>
       <img
         v-if="backgroundImage"
         class="basic-banner__background-image"
         :src="backgroundImage"
+        :style="{ width: imgWidth, bottom: imgBottom }"
         alt="背景图片"
       />
     </div>
@@ -27,7 +31,7 @@
   interface Props {
     height?: string
     title: string
-    subtitle: string
+    subtitle?: string
     buttonText?: string
     buttonColor?: string
     buttonTextColor?: string
@@ -35,6 +39,10 @@
     subtitleColor?: string
     backgroundColor?: string
     backgroundImage?: string
+    imgWidth?: string
+    imgBottom?: string
+    showButton?: boolean
+    showDecoration?: boolean
   }
 
   withDefaults(defineProps<Props>(), {
@@ -45,7 +53,11 @@
     backgroundColor: 'var(--el-color-primary-light-2)',
     titleColor: 'white',
     subtitleColor: 'white',
-    backgroundImage: ''
+    backgroundImage: '',
+    showButton: true,
+    imgWidth: '12rem',
+    imgBottom: '-3rem',
+    showDecoration: true
   })
 
   const emit = defineEmits<{
@@ -115,7 +127,7 @@
     }
 
     // 添加装饰性背景图案
-    &::after {
+    &.has-decoration::after {
       position: absolute;
       right: -10%;
       bottom: -20%;
@@ -125,6 +137,14 @@
       background: rgb(255 255 255 / 10%);
       border-radius: 30%;
       transform: rotate(-20deg);
+    }
+  }
+
+  @media (max-width: $device-phone) {
+    .basic-banner {
+      &__background-image {
+        display: none !important;
+      }
     }
   }
 </style>
